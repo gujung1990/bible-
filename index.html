@@ -1,0 +1,943 @@
+
+<meta charset="UTF-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#4A76A8">
+<title>90일 성경통독</title>
+<style>
+	* {
+		box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+	}
+	
+	body {
+		margin: 0; padding: 16px; background-color: #f5f7fa; color: #333; line-height: 1.5;
+	}
+	
+	.container {
+		max-width: 540px; margin: 0 auto;
+	}
+	
+	header {
+		text-align: center; margin-bottom: 24px;
+	}
+	
+	h1 {
+		color: #4A76A8; margin-bottom: 8px; font-size: 24px;
+	}
+	
+	.today-card {
+		background-color: #fff; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); text-align: center; position: relative;
+	}
+	
+	.today-title {
+		font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #4A76A8;
+	}
+	
+	.today-date {
+		font-size: 18px; margin-bottom: 16px; font-weight: bold;
+	}
+	
+	.today-daynum {
+		font-size: 22px; margin-bottom: 20px; color: #E67700; font-weight: bold;
+	}
+	
+	.listen-btn {
+		display: inline-block; background-color: #4A76A8; color: white; padding: 12px 24px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transition: background-color 0.2s; margin-top: 10px;
+	}
+	
+	.listen-btn:hover,
+	.listen-btn:active {
+		background-color: #3A5F8A;
+	}
+	
+	.toggle-btn {
+		display: block; width: 100%; background-color: #f2f2f2; border: none; padding: 12px; border-radius: 8px; font-size: 16px; margin-bottom: 16px; cursor: pointer; font-weight: bold; color: #555;
+	}
+	
+	.schedule-list {
+		background-color: #fff; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	}
+	
+	.day-item {
+		padding: 16px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+	}
+	
+	.day-item:last-child {
+		border-bottom: none;
+	}
+	
+	.day-info {
+		flex: 1;
+	}
+	
+	.day-date {
+		font-weight: bold; margin-bottom: 4px;
+	}
+	
+	.day-number {
+		color: #777; font-size: 14px;
+	}
+	
+	.day-link {
+		background-color: #E7F0FB; color: #4A76A8; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;
+	}
+	
+	.today-item {
+		background-color: #FFF9E6;
+	}
+	
+	.hidden {
+		display: none;
+	}
+	
+	footer {
+		text-align: center; color: #888; font-size: 14px; margin-top: 32px;
+	}
+	/* 진행률 표시 스타일 */
+	
+	.progress-container {
+		margin-top: 15px; margin-bottom: 15px;
+	}
+	
+	.progress-text {
+		text-align: center; margin-bottom: 5px; font-size: 14px; color: #666;
+	}
+	
+	.progress-bar {
+		height: 10px; background-color: #e0e0e0; border-radius: 5px; overflow: hidden;
+	}
+	
+	.progress-fill {
+		height: 100%; background-color: #4A76A8; width: 0%; border-radius: 5px;
+	}
+	/* 체크박스 스타일 */
+	
+	.day-actions {
+		display: flex; align-items: center;
+	}
+	
+	.complete-checkbox {
+		position: relative; margin-right: 10px; cursor: pointer; font-size: 16px; user-select: none; display: flex; align-items: center;
+	}
+	
+	.complete-checkbox input {
+		position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0;
+	}
+	
+	.checkmark {
+		height: 20px; width: 20px; background-color: #eee; border-radius: 4px; position: relative;
+	}
+	
+	.complete-checkbox:hover input ~ .checkmark {
+		background-color: #ddd;
+	}
+	
+	.complete-checkbox input:checked ~ .checkmark {
+		background-color: #4CAF50;
+	}
+	
+	.checkmark:after {
+		content: ""; position: absolute; display: none;
+	}
+	
+	.complete-checkbox input:checked ~ .checkmark:after {
+		display: block;
+	}
+	
+	.complete-checkbox .checkmark:after {
+		left: 7px; top: 3px; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg);
+	}
+	
+	.today-card.completed {
+		background-color: #e8f5e9; border: 1px solid #81c784;
+	}
+	
+	.complete-tag {
+		position: absolute; top: -10px; right: -10px; background-color: #4CAF50; color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px; font-weight: bold;
+	}
+	
+	.completion-status {
+		text-align: center; margin-top: 15px; font-size: 14px; color: #666;
+	}
+
+</style>
+
+
+<div class="container">
+	<header>
+
+		<h1>90일 성경통독</h1>
+
+		<p>매일 성경 말씀과 함께하는 90일</p>
+	</header>
+
+	<div class="today-card" id="todayCard">
+		<div class="today-title">오늘의 성경통독</div>
+		<div class="today-date" id="todayInfo">로딩 중...</div>
+		<div id="todayDayNum" class="today-daynum"></div>
+
+		<!-- 진행률 표시 추가 -->
+		<div class="progress-container">
+			<div class="progress-text">진행률: <span id="progressPercent">0</span>%</div>
+			<div class="progress-bar">
+				<div id="progressFill" class="progress-fill"></div>
+			</div>
+		</div>
+
+		<a class="listen-btn" href="#" id="todayLink" target="_blank">
+                오늘 성경통독 듣기
+            </a>
+	</div>
+
+	<!-- 완료 개수 표시 -->
+	<div class="completion-status">
+		지금까지 <span id="completedCount">0</span>일 완료
+	</div>
+
+	<button class="toggle-btn" id="toggleBtn">전체 일정 보기</button>
+
+	<div id="scheduleList" class="schedule-list hidden"></div>
+
+	<footer>
+		90일 성경통독 앱 © 2025
+	</footer>
+</div>
+
+<script>
+	// 성경통독 데이터
+	const bibleData = [
+	{
+		date: "2025-03-13",
+		day: "목요일",
+		dayNum: "1일",
+		link: "https://www.youtube.com/watch?v=DDoJCVm12FA&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=1"
+	},
+	{
+		date: "2025-03-14",
+		day: "금요일",
+		dayNum: "2일",
+		link: "https://www.youtube.com/watch?v=7smKY88TO8Q&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=2"
+	},
+	{
+		date: "2025-03-15",
+		day: "토요일",
+		dayNum: "3일",
+		link: "https://www.youtube.com/watch?v=1Bm3NLDOraI&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=3"
+	},
+	{
+		date: "2025-03-16",
+		day: "일요일",
+		dayNum: "4일",
+		link: "https://www.youtube.com/watch?v=IzU8Ga0nHTk&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=4"
+	},
+	{
+		date: "2025-03-17",
+		day: "월요일",
+		dayNum: "5일",
+		link: "https://www.youtube.com/watch?v=BUrHU220mxk&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=5"
+	},
+	{
+		date: "2025-03-18",
+		day: "화요일",
+		dayNum: "6일",
+		link: "https://www.youtube.com/watch?v=tsriC7jED9c&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=6"
+	},
+	{
+		date: "2025-03-19",
+		day: "수요일",
+		dayNum: "7일",
+		link: "https://www.youtube.com/watch?v=fMI8HVqXy_o&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=7"
+	},
+	{
+		date: "2025-03-20",
+		day: "목요일",
+		dayNum: "8일",
+		link: "https://www.youtube.com/watch?v=imi9hFg32WE&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=8"
+	},
+	{
+		date: "2025-03-21",
+		day: "금요일",
+		dayNum: "9일",
+		link: "https://www.youtube.com/watch?v=g2t_je7t1qw&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=9"
+	},
+	{
+		date: "2025-03-22",
+		day: "토요일",
+		dayNum: "10일",
+		link: "https://www.youtube.com/watch?v=JcucfO0OjXw&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=10"
+	},
+	{
+		date: "2025-03-23",
+		day: "일요일",
+		dayNum: "11일",
+		link: "https://www.youtube.com/watch?v=DSb3u8gEifc&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=11"
+	},
+	{
+		date: "2025-03-24",
+		day: "월요일",
+		dayNum: "12일",
+		link: "https://www.youtube.com/watch?v=Fp3NnoZnumE&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=12"
+	},
+	{
+		date: "2025-03-25",
+		day: "화요일",
+		dayNum: "13일",
+		link: "https://www.youtube.com/watch?v=Crz_51hJFe0&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=13"
+	},
+	{
+		date: "2025-03-26",
+		day: "수요일",
+		dayNum: "14일",
+		link: "https://www.youtube.com/watch?v=UozJUiSSkHQ&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=14"
+	},
+	{
+		date: "2025-03-27",
+		day: "목요일",
+		dayNum: "15일",
+		link: "https://www.youtube.com/watch?v=TfTbXJAMfco&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=15"
+	},
+	{
+		date: "2025-03-28",
+		day: "금요일",
+		dayNum: "16일",
+		link: "https://www.youtube.com/watch?v=8FEPk1a8N_E&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=16"
+	},
+	{
+		date: "2025-03-29",
+		day: "토요일",
+		dayNum: "17일",
+		link: "https://www.youtube.com/watch?v=va_bgC7gXiM&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=17"
+	},
+	{
+		date: "2025-03-30",
+		day: "일요일",
+		dayNum: "18일",
+		link: "https://www.youtube.com/watch?v=I65Gmajmy_Q&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=18"
+	},
+	{
+		date: "2025-03-31",
+		day: "월요일",
+		dayNum: "19일",
+		link: "https://www.youtube.com/watch?v=pb6ksoLwJdA&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=19"
+	},
+	{
+		date: "2025-04-01",
+		day: "화요일",
+		dayNum: "20일",
+		link: "https://www.youtube.com/watch?v=qfCW8XDSfcs&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=20"
+	},
+	{
+		date: "2025-04-02",
+		day: "수요일",
+		dayNum: "21일",
+		link: "https://www.youtube.com/watch?v=UWng_P3mxGI&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=21"
+	},
+	{
+		date: "2025-04-03",
+		day: "목요일",
+		dayNum: "22일",
+		link: "https://www.youtube.com/watch?v=nJntbe15T4Q&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=22"
+	},
+	{
+		date: "2025-04-04",
+		day: "금요일",
+		dayNum: "23일",
+		link: "https://www.youtube.com/watch?v=SxubkslKiAw&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=23"
+	},
+	{
+		date: "2025-04-05",
+		day: "토요일",
+		dayNum: "24일",
+		link: "https://www.youtube.com/watch?v=I9AkQw7wjGk&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=24"
+	},
+	{
+		date: "2025-04-06",
+		day: "일요일",
+		dayNum: "25일",
+		link: "https://www.youtube.com/watch?v=_rZqvy4Z0vM&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=25"
+	},
+	{
+		date: "2025-04-07",
+		day: "월요일",
+		dayNum: "26일",
+		link: "https://www.youtube.com/watch?v=bM8lhcPLnx4&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=26"
+	},
+	{
+		date: "2025-04-08",
+		day: "화요일",
+		dayNum: "27일",
+		link: "https://www.youtube.com/watch?v=NrnPC_rfMU8&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=27"
+	},
+	{
+		date: "2025-04-09",
+		day: "수요일",
+		dayNum: "28일",
+		link: "https://www.youtube.com/watch?v=2AT9f4yvxfo&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=28"
+	},
+	{
+		date: "2025-04-10",
+		day: "목요일",
+		dayNum: "29일",
+		link: "https://www.youtube.com/watch?v=AbeC-DEamg0&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=29"
+	},
+	{
+		date: "2025-04-11",
+		day: "금요일",
+		dayNum: "30일",
+		link: "https://www.youtube.com/watch?v=GrJe1FgGpEk&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=30"
+	},
+	{
+		date: "2025-04-12",
+		day: "토요일",
+		dayNum: "31일",
+		link: "https://www.youtube.com/watch?v=RE6o8eRs98I&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=31"
+	},
+	{
+		date: "2025-04-13",
+		day: "일요일",
+		dayNum: "32일",
+		link: "https://www.youtube.com/watch?v=8sqvdhVzB3o&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=32"
+	},
+	{
+		date: "2025-04-14",
+		day: "월요일",
+		dayNum: "33일",
+		link: "https://www.youtube.com/watch?v=Zx5igw6Q098&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=33"
+	},
+	{
+		date: "2025-04-15",
+		day: "화요일",
+		dayNum: "34일",
+		link: "https://www.youtube.com/watch?v=c_NsAiC9auA&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=34"
+	},
+	{
+		date: "2025-04-16",
+		day: "수요일",
+		dayNum: "35일",
+		link: "https://www.youtube.com/watch?v=NaCk5ifblAc&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=35"
+	},
+	{
+		date: "2025-04-17",
+		day: "목요일",
+		dayNum: "36일",
+		link: "https://www.youtube.com/watch?v=HMetejrBYDs&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=36"
+	},
+	{
+		date: "2025-04-18",
+		day: "금요일",
+		dayNum: "37일",
+		link: "https://www.youtube.com/watch?v=N7177iBt8ds&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=37"
+	},
+	{
+		date: "2025-04-19",
+		day: "토요일",
+		dayNum: "38일",
+		link: "https://www.youtube.com/watch?v=Txlc_qNvrmo&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=38"
+	},
+	{
+		date: "2025-04-20",
+		day: "일요일",
+		dayNum: "39일",
+		link: "https://www.youtube.com/watch?v=8WVebB9GCao&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=39"
+	},
+	{
+		date: "2025-04-21",
+		day: "월요일",
+		dayNum: "40일",
+		link: "https://www.youtube.com/watch?v=adormREazoE&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=40"
+	},
+	{
+		date: "2025-04-22",
+		day: "화요일",
+		dayNum: "41일",
+		link: "https://www.youtube.com/watch?v=Ui94Ftv_rQo&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=41"
+	},
+	{
+		date: "2025-04-23",
+		day: "수요일",
+		dayNum: "42일",
+		link: "https://www.youtube.com/watch?v=zcFEytEIfso&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=42"
+	},
+	{
+		date: "2025-04-24",
+		day: "목요일",
+		dayNum: "43일",
+		link: "https://www.youtube.com/watch?v=-7P14xhGzCo&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=43"
+	},
+	{
+		date: "2025-04-25",
+		day: "금요일",
+		dayNum: "44일",
+		link: "https://www.youtube.com/watch?v=mDgEyX08sTQ&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=44"
+	},
+	{
+		date: "2025-04-26",
+		day: "토요일",
+		dayNum: "45일",
+		link: "https://www.youtube.com/watch?v=7U6xMJ_pJv8&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=45"
+	},
+	{
+		date: "2025-04-27",
+		day: "일요일",
+		dayNum: "46일",
+		link: "https://www.youtube.com/watch?v=-QcoqQZXN0Q&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=46"
+	},
+	{
+		date: "2025-04-28",
+		day: "월요일",
+		dayNum: "47일",
+		link: "https://www.youtube.com/watch?v=catFDSQToNI&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=47"
+	},
+	{
+		date: "2025-04-29",
+		day: "화요일",
+		dayNum: "48일",
+		link: "https://www.youtube.com/watch?v=N6iRvHorD34&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=48"
+	},
+	{
+		date: "2025-04-30",
+		day: "수요일",
+		dayNum: "49일",
+		link: "https://www.youtube.com/watch?v=G62SmEuOkpM&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=49"
+	},
+	{
+		date: "2025-05-01",
+		day: "목요일",
+		dayNum: "50일",
+		link: "https://www.youtube.com/watch?v=sw1ihmCV_UE&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=50"
+	},
+	{
+		date: "2025-05-02",
+		day: "금요일",
+		dayNum: "51일",
+		link: "https://www.youtube.com/watch?v=5rr_Rh85JYs&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=51"
+	},
+	{
+		date: "2025-05-03",
+		day: "토요일",
+		dayNum: "52일",
+		link: "https://www.youtube.com/watch?v=lBniMVpxbOA&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=52"
+	},
+	{
+		date: "2025-05-04",
+		day: "일요일",
+		dayNum: "53일",
+		link: "https://www.youtube.com/watch?v=m3mA5PGH8Yw&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=53"
+	},
+	{
+		date: "2025-05-05",
+		day: "월요일",
+		dayNum: "54일",
+		link: "https://www.youtube.com/watch?v=CBrYIhSUeOc&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=54"
+	},
+	{
+		date: "2025-05-06",
+		day: "화요일",
+		dayNum: "55일",
+		link: "https://www.youtube.com/watch?v=ts0LjALAcJI&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=55"
+	},
+	{
+		date: "2025-05-07",
+		day: "수요일",
+		dayNum: "56일",
+		link: "https://www.youtube.com/watch?v=sdK4XqQyWfo&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=56"
+	},
+	{
+		date: "2025-05-08",
+		day: "목요일",
+		dayNum: "57일",
+		link: "https://www.youtube.com/watch?v=wDHxIHuNko8&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=57"
+	},
+	{
+		date: "2025-05-09",
+		day: "금요일",
+		dayNum: "58일",
+		link: "https://www.youtube.com/watch?v=VxPujzkpUDg&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=58"
+	},
+	{
+		date: "2025-05-10",
+		day: "토요일",
+		dayNum: "59일",
+		link: "https://www.youtube.com/watch?v=BSBbqYS42Vw&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=59"
+	},
+	{
+		date: "2025-05-11",
+		day: "일요일",
+		dayNum: "60일",
+		link: "https://www.youtube.com/watch?v=8ikJ_w06ecw&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=60"
+	},
+	{
+		date: "2025-05-12",
+		day: "월요일",
+		dayNum: "61일",
+		link: "https://www.youtube.com/watch?v=LjP7pEOjYvA&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=61"
+	},
+	{
+		date: "2025-05-13",
+		day: "화요일",
+		dayNum: "62일",
+		link: "https://www.youtube.com/watch?v=jOxLN7Y9D6Q&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=62"
+	},
+	{
+		date: "2025-05-14",
+		day: "수요일",
+		dayNum: "63일",
+		link: "https://www.youtube.com/watch?v=F2KDoUmGP_Y&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=63"
+	},
+	{
+		date: "2025-05-15",
+		day: "목요일",
+		dayNum: "64일",
+		link: "https://www.youtube.com/watch?v=OmegclSgbs0&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=64"
+	},
+	{
+		date: "2025-05-16",
+		day: "금요일",
+		dayNum: "65일",
+		link: "https://www.youtube.com/watch?v=aAzsKqJqW1w&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=65"
+	},
+	{
+		date: "2025-05-17",
+		day: "토요일",
+		dayNum: "66일",
+		link: "https://www.youtube.com/watch?v=bDprbMeGthw&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=66"
+	},
+	{
+		date: "2025-05-18",
+		day: "일요일",
+		dayNum: "67일",
+		link: "https://www.youtube.com/watch?v=DQn2QdEzXFg&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=67"
+	},
+	{
+		date: "2025-05-19",
+		day: "월요일",
+		dayNum: "68일",
+		link: "https://www.youtube.com/watch?v=wtKSbJ7hawc&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=68"
+	},
+	{
+		date: "2025-05-20",
+		day: "화요일",
+		dayNum: "69일",
+		link: "https://www.youtube.com/watch?v=KTWTOX7csmU&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=69"
+	},
+	{
+		date: "2025-05-21",
+		day: "수요일",
+		dayNum: "70일",
+		link: "https://www.youtube.com/watch?v=vQjEg1BaQNg&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=70"
+	},
+	{
+		date: "2025-05-22",
+		day: "목요일",
+		dayNum: "71일",
+		link: "https://www.youtube.com/watch?v=HGyx6oqtTTY&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=71"
+	},
+	{
+		date: "2025-05-23",
+		day: "금요일",
+		dayNum: "72일",
+		link: "https://www.youtube.com/watch?v=PCY_Bn6ALPg&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=72"
+	},
+	{
+		date: "2025-05-24",
+		day: "토요일",
+		dayNum: "73일",
+		link: "https://www.youtube.com/watch?v=KqwiZ6-5N8k&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=73"
+	},
+	{
+		date: "2025-05-25",
+		day: "일요일",
+		dayNum: "74일",
+		link: "https://www.youtube.com/watch?v=pvHOdbupvJE&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=74"
+	},
+	{
+		date: "2025-05-26",
+		day: "월요일",
+		dayNum: "75일",
+		link: "https://www.youtube.com/watch?v=vSx3L3vvj1g&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=75"
+	},
+	{
+		date: "2025-05-27",
+		day: "화요일",
+		dayNum: "76일",
+		link: "https://www.youtube.com/watch?v=mEPViovpauc&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=76"
+	},
+	{
+		date: "2025-05-28",
+		day: "수요일",
+		dayNum: "77일",
+		link: "https://www.youtube.com/watch?v=g9ZWxb2p9VA&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=77"
+	},
+	{
+		date: "2025-05-29",
+		day: "목요일",
+		dayNum: "78일",
+		link: "https://www.youtube.com/watch?v=xQc28oyU5LQ&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=78"
+	},
+	{
+		date: "2025-05-30",
+		day: "금요일",
+		dayNum: "79일",
+		link: "https://www.youtube.com/watch?v=6HuAiC9auA&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=79"
+	},
+	{
+		date: "2025-05-31",
+		day: "토요일",
+		dayNum: "80일",
+		link: "https://www.youtube.com/watch?v=sJUwiqwlNq8&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=80"
+	},
+	{
+		date: "2025-06-01",
+		day: "일요일",
+		dayNum: "81일",
+		link: "https://www.youtube.com/watch?v=kdNt-Z-ITmo&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=81"
+	},
+	{
+		date: "2025-06-02",
+		day: "월요일",
+		dayNum: "82일",
+		link: "https://www.youtube.com/watch?v=e2OQvVU_un0&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=82"
+	},
+	{
+		date: "2025-06-03",
+		day: "화요일",
+		dayNum: "83일",
+		link: "https://www.youtube.com/watch?v=1iYFMRDIUOQ&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=83"
+	},
+	{
+		date: "2025-06-04",
+		day: "수요일",
+		dayNum: "84일",
+		link: "https://www.youtube.com/watch?v=pEzXbxEb5uY&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=84"
+	},
+	{
+		date: "2025-06-05",
+		day: "목요일",
+		dayNum: "85일",
+		link: "https://www.youtube.com/watch?v=ydiNwUr1Mgo&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=85"
+	},
+	{
+		date: "2025-06-06",
+		day: "금요일",
+		dayNum: "86일",
+		link: "https://www.youtube.com/watch?v=ji2IZXJJ_Kc&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=86"
+	},
+	{
+		date: "2025-06-07",
+		day: "토요일",
+		dayNum: "87일",
+		link: "https://www.youtube.com/watch?v=dT_Mitfxvj0&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=87"
+	},
+	{
+		date: "2025-06-08",
+		day: "일요일",
+		dayNum: "88일",
+		link: "https://www.youtube.com/watch?v=aGjH6q_aej4&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=88"
+	},
+	{
+		date: "2025-06-09",
+		day: "월요일",
+		dayNum: "89일",
+		link: "https://www.youtube.com/watch?v=gkPi4fT0dgk&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=89"
+	},
+	{
+		date: "2025-06-10",
+		day: "화요일",
+		dayNum: "90일",
+		link: "https://www.youtube.com/watch?v=wHQY85wNw9s&list=PLbR-BrshyLZsYtWUUP8Kq4AllS-xbG9BI&index=90"
+	}];
+
+	// 현재 날짜 가져오기
+	const today = new Date();
+	const formattedToday = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+
+	// 테스트 목적으로 오늘 날짜를 2025-05-12로 설정 (실제 배포 시 이 줄 제거 또는 주석 처리)
+	const testToday = "2025-05-12";
+
+	// 완료 여부 관리 함수들
+	function isDateCompleted(date)
+	{
+		const completed = JSON.parse(localStorage.getItem('bibleCompleted') || '{}');
+		return completed[date] === true;
+	}
+
+	function toggleCompleted(date, isCompleted)
+	{
+		const completed = JSON.parse(localStorage.getItem('bibleCompleted') || '{}');
+		completed[date] = isCompleted;
+		localStorage.setItem('bibleCompleted', JSON.stringify(completed));
+
+		// 오늘 날짜의 경우 상단 표시도 업데이트
+		if (date === testToday)
+		{
+			updateTodayStatus();
+		}
+
+		// 완료한 날짜 수 계산하여 표시
+		updateCompletionStatus();
+	}
+
+	function updateTodayStatus()
+	{
+		const isToday = isDateCompleted(testToday);
+			// 오늘 날짜의 완료 상태에 따라 스타일 변경
+		const todayCard = document.getElementById('todayCard');
+		if (isToday)
+		{
+			todayCard.classList.add('completed');
+				// 완료 표시 추가
+			if (!document.getElementById('todayCompleteTag'))
+			{
+				const completeTag = document.createElement('div');
+				completeTag.id = 'todayCompleteTag';
+				completeTag.className = 'complete-tag';
+				completeTag.textContent = '완료';
+				todayInfo.parentNode.insertBefore(completeTag, todayInfo);
+			}
+		}
+		else
+		{
+			todayCard.classList.remove('completed');
+			const completeTag = document.getElementById('todayCompleteTag');
+			if (completeTag) completeTag.remove();
+		}
+	}
+
+	function updateCompletionStatus()
+	{
+		const completed = JSON.parse(localStorage.getItem('bibleCompleted') || '{}');
+		const completedCount = Object.values(completed).filter(v => v).length;
+
+		// 완료한 일수 업데이트
+		const completedCountElement = document.getElementById('completedCount');
+		if (completedCountElement)
+		{
+			completedCountElement.textContent = completedCount;
+		}
+	}
+
+	// 오늘의 성경통독 정보 표시
+	const todayInfo = document.getElementById('todayInfo');
+	const todayDayNum = document.getElementById('todayDayNum');
+	const todayLink = document.getElementById('todayLink');
+
+	// 오늘에 해당하는 데이터 찾기 (테스트 날짜 사용)
+	let todayData = bibleData.find(item => item.date === testToday);
+
+	// 오늘 데이터가 없으면 가장 가까운 날짜 찾기
+	if (!todayData)
+	{
+		// 현재 날짜가 첫 날짜보다 이전인 경우 첫 번째 항목 사용
+		if (testToday < bibleData[0].date)
+		{
+			todayData = bibleData[0];
+			todayInfo.innerHTML = `${todayData.date} (${todayData.day})`;
+			todayDayNum.innerHTML = `아직 시작 전입니다!<br>${todayData.dayNum}`;
+		}
+		// 현재 날짜가 마지막 날짜보다 이후인 경우 마지막 항목 사용
+		else if (testToday > bibleData[bibleData.length - 1].date)
+		{
+			todayData = bibleData[bibleData.length - 1];
+			todayInfo.innerHTML = `${todayData.date} (${todayData.day})`;
+			todayDayNum.innerHTML = `일정이 종료되었습니다!<br>${todayData.dayNum}`;
+		}
+		// 그 외의 경우 (데이터에 누락된 날짜가 있는 경우)
+		else
+		{
+			// 가장 가까운 미래 날짜 찾기
+			for (let i = 0; i < bibleData.length; i++)
+			{
+				if (bibleData[i].date > testToday)
+				{
+					todayData = bibleData[i];
+					break;
+				}
+			}
+			if (!todayData)
+			{
+				todayData = bibleData[0]; // 기본값
+			}
+			todayInfo.innerHTML = `${todayData.date} (${todayData.day})`;
+			todayDayNum.innerHTML = todayData.dayNum;
+		}
+	}
+	else
+	{
+		todayInfo.innerHTML = `${todayData.date} (${todayData.day})`;
+		todayDayNum.innerHTML = todayData.dayNum;
+	}
+
+	// 오늘 링크 설정
+	todayLink.href = todayData.link;
+
+	// 진행률 계산 및 표시
+	let progressValue = 0;
+	if (todayData)
+	{
+		// 일차 번호에서 숫자만 추출
+		const dayNumber = parseInt(todayData.dayNum.replace(/[^0-9]/g, ''));
+		progressValue = Math.min(Math.round((dayNumber / 90) * 100), 100);
+	}
+
+	// 진행률 표시
+	document.getElementById('progressPercent').textContent = progressValue;
+	document.getElementById('progressFill').style.width = progressValue + '%';
+
+	// 초기 로드 시 오늘 상태 업데이트
+	updateTodayStatus();
+	updateCompletionStatus();
+
+	// 전체 일정 목록 표시
+	const scheduleList = document.getElementById('scheduleList');
+	const toggleBtn = document.getElementById('toggleBtn');
+
+	// 일정 목록 생성
+	bibleData.forEach(item =>
+	{
+		const dayItem = document.createElement('div');
+		dayItem.className = 'day-item';
+		if (item.date === testToday)
+		{
+			dayItem.classList.add('today-item');
+		}
+
+		// 완료 여부 확인
+		const isCompleted = isDateCompleted(item.date);
+
+		dayItem.innerHTML = `
+                <div class="day-info">
+                    <div class="day-date">${item.date} (${item.day})</div>
+                    <div class="day-number">${item.dayNum}</div>
+                </div>
+                <div class="day-actions">
+                    <label class="complete-checkbox">
+                        <input type="checkbox" data-date="${item.date}" ${isCompleted ? 'checked' : ''} 
+                               onchange="toggleCompleted('${item.date}', this.checked)">
+                        <span class="checkmark"></span>
+                    </label>
+                    <a href="${item.link}" target="_blank" class="day-link">듣기</a>
+                </div>
+            `;
+
+		scheduleList.appendChild(dayItem);
+	});
+
+	// 전체 일정 토글 버튼 기능
+	toggleBtn.addEventListener('click', function()
+	{
+		if (scheduleList.classList.contains('hidden'))
+		{
+			scheduleList.classList.remove('hidden');
+			toggleBtn.textContent = '전체 일정 숨기기';
+		}
+		else
+		{
+			scheduleList.classList.add('hidden');
+			toggleBtn.textContent = '전체 일정 보기';
+		}
+	});
+
+</script>
